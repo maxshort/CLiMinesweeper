@@ -165,7 +165,7 @@ end
 #TODO: Get a flag count going...
 #TODO: Also want to tell when we actually win -- when only mines remain...
 def play_game()
-	directions = <<END
+	directions = <<~END
 	Commands:
 	  SS y,x -- for select space.
 	  F y, x -- to flag a space.
