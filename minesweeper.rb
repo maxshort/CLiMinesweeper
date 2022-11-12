@@ -119,12 +119,16 @@ class MineSweeperBoard
 		"Flags: #{@numFlagged}/#{@totalMines}"
 	end
 
+	def _last_digit(i)
+		i % 10
+	end
+
 	def _make_horiz_guide
 		#TODO: Not sure on double digit #s...Could in theory only put the first digit...
 		# 4 spaces for column guide...
 		ret = "  "
 		@board.size.times do |i|
-			ret += "#{i} "
+			ret += "#{_last_digit(i)} "
 		end
 		return ret
 	end
@@ -136,7 +140,7 @@ class MineSweeperBoard
 		s += _make_horiz_guide
 		s += "\n"
 		@board.each_with_index do |row, rowIdx|
-			s += "#{rowIdx} "
+			s += "#{_last_digit(rowIdx)} "
 			row.each_with_index do |cell, colIdx|
 				cell_display = nil
 				if @revealed[rowIdx][colIdx] then
@@ -154,7 +158,7 @@ class MineSweeperBoard
 				end
 				s += "#{cell_display} "
 			end
-			s += "#{rowIdx} "
+			s += "#{_last_digit(rowIdx)} "
 			s += "\n"
 		end
 		s += _make_horiz_guide
@@ -169,8 +173,6 @@ def parse_coords(s)
 	return [m[1].to_i, m[2].to_i]
 end
 
-#TODO: Get a flag count going...
-#TODO: Also want to tell when we actually win -- when only mines remain...
 def play_game()
 	directions = <<~END
 	Commands:
