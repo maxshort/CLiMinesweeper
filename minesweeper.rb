@@ -162,6 +162,13 @@ class MineSweeperBoard
 	end
 end
 
+PAIR_REGEX = /\s*(\d+)\s*,\s*(\d+)/
+def parse_coords(s)
+	m = PAIR_REGEX.match(s)
+	return nil if m.nil?
+	return [m[1].to_i, m[2].to_i]
+end
+
 #TODO: Get a flag count going...
 #TODO: Also want to tell when we actually win -- when only mines remain...
 def play_game()
@@ -183,16 +190,26 @@ END
 		command = Kernel.readline
 		#TODO: Not robust against double digits, etc.
 		if command[0...2] == "SS" then
-			y = command[3].to_i
-			x = command[5].to_i
+			coords = parse_coords(command[2..])
+			if coords.nil?
+				puts "Coordinate format not recognized."
+				next
+			end
+			y = coords[0]
+			x = coords[1]
 			no_mine_hit = b.select_space(y, x)
 			unless no_mine_hit
 				puts "HIT A MINE...GAME OVER"
 				return
 			end
 		elsif command[0] == "F" then
-			y = command[2].to_i
-			x = command[4].to_i
+			coords = parse_coords(command[1..])
+			if coords.nil?
+				puts "Coordinate format not recognized."
+				next
+			end
+			y = coords[0]
+			x = coords[1]
 			b.toggle_flag(y, x)
 		else
 			puts "Command not recognized. Ignored."
