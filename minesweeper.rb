@@ -101,6 +101,10 @@ class MineSweeperBoard
 			# We've already selected that space and don't want to infinitely recurse...
 			return true
 		else
+			# Otherwise a hidden flag could remain...
+			if @flagged[y][x]
+				toggle_flag(y,x)
+			end
 			@revealed[y][x] = true
 			surrounding_mine_count = _surrounding_mine_count(y, x)
 			if surrounding_mine_count > 0 then
