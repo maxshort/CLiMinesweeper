@@ -170,6 +170,24 @@ class MineSweeperBoard
 		s += _make_horiz_guide
 		s
 	end
+
+	def can_clear_all
+		@numFlagged == @totalMines
+	end
+
+	# Returns true if all non-flagged cleared,
+	# false if a mine was hit.
+	def clear_all
+		@board.each_with_index do |row, rowIdx|
+			row.each_with_index do |cell, colIdx|
+				if !@flagged[rowIdx][colIdx] && !@revealed[rowIdx][colIdx] then
+					no_mine_hit = select_space(rowIdx, colIdx)
+					return false unless no_mine_hit
+				end
+			end
+		end
+		return true
+	end
 end
 
 PAIR_REGEX = /\s*(\d+)\s*,\s*(\d+)/
@@ -179,18 +197,23 @@ def parse_coords(s)
 	return [m[1].to_i, m[2].to_i]
 end
 
+LOSS_MESSAGE = "HIT A MINE...GAME OVER"
+WIN_MESSAGE = "ONLY MINES REMAINING -- you won."
+COORDS_FORMAT_MESSAGE = "Coordinate format not recognized."
+
 def play_game()
 	directions = <<~END
 	Commands:
 	  SS y,x -- for select space.
 	  F y, x -- to flag a space.
 	  Note that coordinates are y,x and zero-based.
+	  CLEAR -- clear all non-flagged spaces. Only allowed when total flags = total mines.
 END
 	puts directions
 	b = MineSweeperBoard.new(10, 10, 8)
 	while true
 		if b.only_mines_remain then
-			puts "ONLY MINES REMAINING -- you won."
+			puts WIN_MESSAGE
 			break
 		end
 		puts b.print_board
@@ -199,26 +222,37 @@ END
 		if command[0...2] == "SS" then
 			coords = parse_coords(command[2..])
 			if coords.nil?
-				puts "Coordinate format not recognized."
+				puts COORDS_FORMAT_MESSAGE
 				next
 			end
 			y = coords[0]
 			x = coords[1]
 			no_mine_hit = b.select_space(y, x)
 			unless no_mine_hit
-				puts "HIT A MINE...GAME OVER"
+				puts LOSS_MESSAGE
 				return
 			end
 		elsif command[0] == "F" then
 			coords = parse_coords(command[1..])
 			if coords.nil?
-				puts "Coordinate format not recognized."
+				puts COORDS_FORMAT_MESSAGE
 				next
 			end
 			y = coords[0]
 			x = coords[1]
 			did_toggle = b.toggle_flag(y, x)
 			puts "Space already uncovered. No flag applied." unless did_toggle
+		elsif command == "CLEAR\n" then
+			if !b.can_clear_all then
+				puts "CLEAR can only be applied when the number of flags matches the number of mines."
+			else
+				if b.clear_all
+					puts WIN_MESSAGE
+				else
+					puts LOSS_MESSAGE
+				end
+				break
+			end
 		else
 			puts "Command not recognized. Ignored."
 		end
