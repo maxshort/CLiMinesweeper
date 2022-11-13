@@ -196,7 +196,6 @@ END
 		puts b.print_board
 		puts "SS y,x or F y,x"
 		command = Kernel.readline
-		#TODO: Not robust against double digits, etc.
 		if command[0...2] == "SS" then
 			coords = parse_coords(command[2..])
 			if coords.nil?
