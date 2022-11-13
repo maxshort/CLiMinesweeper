@@ -171,6 +171,18 @@ class MineSweeperBoard
 		s
 	end
 
+	def print_revealed_board
+		s = ""
+		@board.each_with_index do |row, rowIdx|
+			row.each_with_index do |cell_value, colIdx|
+				cell_display = cell_value ? "*" : "_"
+				s += "#{cell_display} "
+			end
+			s += "\n"
+		end
+		return s
+	end
+
 	def can_clear_all
 		@numFlagged == @totalMines
 	end
@@ -214,6 +226,7 @@ END
 	while true
 		if b.only_mines_remain then
 			puts WIN_MESSAGE
+			puts b.print_revealed_board
 			break
 		end
 		puts b.print_board
@@ -230,7 +243,8 @@ END
 			no_mine_hit = b.select_space(y, x)
 			unless no_mine_hit
 				puts LOSS_MESSAGE
-				return
+				puts b.print_revealed_board
+				break
 			end
 		elsif command[0] == "F" then
 			coords = parse_coords(command[1..])
@@ -248,8 +262,10 @@ END
 			else
 				if b.clear_all
 					puts WIN_MESSAGE
+					puts b.print_revealed_board
 				else
 					puts LOSS_MESSAGE
+					puts b.print_revealed_board
 				end
 				break
 			end
