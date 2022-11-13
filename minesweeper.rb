@@ -101,8 +101,6 @@ class MineSweeperBoard
 			# We've already selected that space and don't want to infinitely recurse...
 			return true
 		else
-			# What's the reveal logic? Select a space if this space is 0 and keep selecting spaces until you hit a non-zero ?
-			# MAkes sense because that's just a user convenience thing...if it's 0, you'll select all surrounding spaces anyway...
 			@revealed[y][x] = true
 			surrounding_mine_count = _surrounding_mine_count(y, x)
 			if surrounding_mine_count > 0 then
