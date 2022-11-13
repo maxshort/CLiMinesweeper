@@ -79,13 +79,17 @@ class MineSweeperBoard
 		mines
 	end
 
+	# Returns true if flag toggled on space, false otherwise.
+	# False is when space is already revealed (no reason to flag).
 	def toggle_flag(y, x)
+		return false unless !@revealed[y][x]
 		if @flagged[y][x] then
 			@numFlagged -= 1
 		else
 			@numFlagged += 1
 		end
 		@flagged[y][x] = !@flagged[y][x]
+		return true
 	end
 	
 	# False means hit a mine...
@@ -212,7 +216,8 @@ END
 			end
 			y = coords[0]
 			x = coords[1]
-			b.toggle_flag(y, x)
+			did_toggle = b.toggle_flag(y, x)
+			puts "Space already uncovered. No flag applied." unless did_toggle
 		else
 			puts "Command not recognized. Ignored."
 		end
